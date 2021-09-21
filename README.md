@@ -1,10 +1,10 @@
-# Oli Plugins
+# Jak Plugins
 
 Welcome to my plugins repo. To add my repo, use the following details.
 
-**Github Repository owner:** Oiuyo
+**Github Repository owner:** Jakous
 
-**Github Repository name:** Oli-plugins
+**Github Repository name:** Jak-plugins
 
 
 To use my plugins you must have Illumine's repo for the iUtils plugin. 
@@ -14,11 +14,12 @@ To use my plugins you must have Illumine's repo for the iUtils plugin.
 **Github Repository name:** illu-plugins
 
 # Credits
-I want to credit Mike and ImNo in particular for helping me learn about plugins and plugin development as well as Illumine for his extensive utils and for building a great community in his server.
-Please support them and check out their plugins in their servers.
+I want to credit Oiuyo and Cetti for being the reason I have been able to complete recent plugin projects.
+Illumine for all the work put in creating the utilities and community.
+Please support them in their endevours and show them some love.
 
-**Mike's Plugins (MK Plugins):** https://discord.com/invite/SY9hEVTM5t
+**Oiuyo has contrib channel in Illumine's server** 
 
-**ImNo's Plugins (UG Plugins):** https://discord.com/invite/jHueD8YGKU
+**Cetti (TheOutlet):** https://discord.gg/jRj6jm5tHy
 
 **Illumine's Plugins:** https://discord.com/invite/9fGzEDR
