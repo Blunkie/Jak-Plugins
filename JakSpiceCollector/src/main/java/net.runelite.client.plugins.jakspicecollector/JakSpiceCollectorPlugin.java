@@ -76,6 +76,9 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	private Client client;
 
 	@Inject
+	protected Chatbox chatbox;
+
+	@Inject
 	private JakSpiceCollectorConfig config;
 
 	@Inject
@@ -88,16 +91,10 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	private KeyboardUtils keyboard;
 
 	@Inject
-	protected Chatbox chatbox;
-
-	@Inject
 	private InventoryUtils inventory;
 
 	@Inject
 	private CalculationUtils calc;
-
-	@Inject
-	private ConfigManager configManager;
 
 	@Inject
 	OverlayManager overlayManager;
@@ -105,24 +102,15 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	@Inject
 	private Notifier notifier;
 
-	@Inject
-	private PluginManager pluginManager;
-
 	@Getter(AccessLevel.PACKAGE)
 	private StringBuilder status = new StringBuilder();
 
-	private Rectangle bounds;
-	private int opportunityEatHP;
 	int timeout = 0;
 	int tickLength;
-	int nextHealHp;
 	long sleepLength;
 	boolean startSpice;
 
-	JakSpiceCollectorPlugin plugin;
 	Instant botTimer;
-	WorldPoint huntingLocation;
-	NPC targetNPC;
 	MenuEntry targetMenu;
 
 	@Provides
@@ -139,7 +127,6 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	protected void shutDown() {
 		resetVals();
 	}
-
 
 
 	private void resetVals() {
@@ -161,6 +148,7 @@ public class JakSpiceCollectorPlugin extends Plugin {
 				targetMenu = null;
 				botTimer = Instant.now();
 				overlayManager.add(overlay);
+				getCatHP();
 				timeout = 0;
 			} else {
 				resetVals();
@@ -180,11 +168,11 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	}
 
 	@Subscribe
-	private void onGameTick(GameTick event)
-	{
+	private void onGameTick(GameTick event) {
 		NPC basementRats = new NPCQuery().idEquals(NpcID.HELLRAT).result(client).nearestTo(client.getLocalPlayer()); //NPC of hell rats in basement
 		NPC cat = new NPCQuery().nameContains("cat").result(client).nearestTo(client.getLocalPlayer()); //NPC of closest cat (ours)
 		WallObject curtain = new WallObjectQuery().idEquals(539).result(client).nearestTo(client.getLocalPlayer()); //Wallobject for curtain
+		Object stairs = new GameObjectQuery().idEquals(12265).result(client).nearestTo(client.getLocalPlayer());
 		Widget insertCat = client.getWidget(14352385); //Chatbox widget for inserting cat
 		Widget clickContinue = client.getWidget(12648449); //Chatbox widget for click here to continue to drop/insert cat
 		Widget clickContinue1 = client.getWidget(15007746); //Chatbox widget for click here to continue to start fight
@@ -193,8 +181,7 @@ public class JakSpiceCollectorPlugin extends Plugin {
 			return;
 		}
 
-		if (timeout > 0)
-		{
+		if (timeout > 0) {
 			timeout--;
 		}
 
@@ -229,18 +216,18 @@ public class JakSpiceCollectorPlugin extends Plugin {
 					log.info("Cat");
 					MenuEntry insert = new MenuEntry("Continue", "", 0, MenuAction.WIDGET_TYPE_6.getId(), 1, 14352385, false);
 					utils.doInvokeMsTime(insert, sleepLength);
+					timeout = 1 + tickDelay();
 				}
 			}
 
 			if (basementRats == null) {
 				updateStatus("In Combat");
-				if (cat.getHealthRatio() != -1 && calculateHealth(cat) <= nextHealHp && timeout == 0) {
+				if (cat.getHealthRatio() != -1 && calculateHealth(cat) <= getNextHealHP() && timeout == 0) {
 					updateStatus("Healing Cat");
 					useKaramOnCurtain(); //uses karambwanji on curtain to heal cat.
 					getNextHealHP();
 					timeout = 2 + tickDelay();
-				} else
-				if (clickContinue1 != null) {
+				} else if (clickContinue1 != null) {
 					updateStatus("In Combat");
 					getNextHealHP();
 					keyboard.pressKey(VK_SPACE); //uses space to continue dialogue
@@ -250,8 +237,7 @@ public class JakSpiceCollectorPlugin extends Plugin {
 		}
 	}
 
-	private boolean inBasement()
-	{
+	private boolean inBasement() {
 		return ArrayUtils.contains(client.getMapRegions(), 12442); //checks region ID of player and compares to basement region ID
 	}
 
@@ -260,24 +246,47 @@ public class JakSpiceCollectorPlugin extends Plugin {
 		this.shutDown();
 	}
 
-	private int calculateHealth(NPC target)
-	{
+	private int calculateHealth(NPC target) {
 		// Based on OpponentInfoOverlay HP calculation & taken from the default slayer plugin
-		if (target == null || target.getName() == null)
-		{
+		if (target == null || target.getName() == null) {
 			return -1;
 		}
 
 		final int healthScale = target.getHealthScale();
 		final int healthRatio = target.getHealthRatio();
-		final Integer maxHealth = 6;
+		final Integer maxHealth = getCatHP();
 
-		if (healthRatio < 0 || healthScale <= 0 || maxHealth == null)
-		{
+		if (healthRatio < 0 || healthScale <= 0 || maxHealth == null) {
 			return -1;
 		}
 
-		return (int)((maxHealth * healthRatio / healthScale) + 0.5f);
+		return (int) ((maxHealth * healthRatio / healthScale) + 0.5f);
+	}
+
+	private int getCatHP() {
+		int totalHP = 6;
+		switch (config.type()) {
+			case WILY: totalHP = 12;
+				break;
+			case NORMAL: totalHP = 6;
+				break;
+			case KITTEN: totalHP = 4;
+				break;
+		}
+		return totalHP;
+	}
+
+	private int getNextHealHP() {
+		int healCatAt = 3;
+		switch (config.type()) {
+			case WILY: healCatAt = calc.getRandomIntBetweenRange(3, 9);
+				break;
+			case NORMAL: healCatAt = calc.getRandomIntBetweenRange(2, 5);
+				break;
+			case KITTEN: healCatAt = calc.getRandomIntBetweenRange(2, 3);
+				break;
+		}
+		return healCatAt;
 	}
 
 	private void retrieveCat() {
@@ -302,11 +311,7 @@ public class JakSpiceCollectorPlugin extends Plugin {
 				MenuAction.ITEM_USE_ON_GAME_OBJECT.getId(), sleepDelay());
 	}
 
-	private void getNextHealHP() {
-		nextHealHp = calc.getRandomIntBetweenRange(3, 5);
-	}
-
-	public void updateStatus(String newStatus){ //Updates status String
+	public void updateStatus(String newStatus) { //Updates status String
 		int statusTotalCharCount = status.length();
 		status.replace(0, statusTotalCharCount, newStatus);
 	}

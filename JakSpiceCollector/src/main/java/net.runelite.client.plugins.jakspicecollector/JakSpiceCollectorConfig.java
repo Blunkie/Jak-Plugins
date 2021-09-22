@@ -46,15 +46,25 @@ public interface JakSpiceCollectorConfig extends Config
 			title = "instructionsTitle"
 	)
 	default String read() {
-		return "Start in Evil Dave's basement near with raw karambwanji in inventory near the behemoth hell rat you want to fight. Does not bank, if you want banking checkout Sandy Plugins." +
-				"  DO NOT USE KITTEN - I CAN NOT TAKE THE MORAL WEIGHT OF BEING RESPONSIBLE FOR ANY KITTEN DEATHS.";
+		return "Start in Evil Dave's basement near with raw karambwanji in inventory near the behemoth hell rat you want to fight. " +
+				"Does not bank, if you want banking checkout Sandy Plugins.";
+	}
+
+	@ConfigItem(
+			keyName = "type",
+			name = "Cat Type",
+			description = "Type of cat being used. Choose appropriate cat type from options ",
+			position = 3
+	)
+	default JakSpiceCollectorCatType type() {
+		return JakSpiceCollectorCatType.NORMAL;
 	}
 
 	@ConfigItem(
 			keyName = "enableUI",
 			name = "Enable UI",
 			description = "Enable if using karambwanji as food for cat during fight.",
-			position = 3
+			position = 4
 	)
 	default boolean enableUI()
 	{
@@ -65,7 +75,7 @@ public interface JakSpiceCollectorConfig extends Config
 			keyName = "startSpice",
 			name = "Start/Stop",
 			description = "Start/stop button",
-			position = 4
+			position = 5
 	)
 	default Button startSpice() {
 		return new Button();
