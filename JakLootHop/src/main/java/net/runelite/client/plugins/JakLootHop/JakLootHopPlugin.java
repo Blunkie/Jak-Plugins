@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.olidropper;
+package net.runelite.client.plugins.JakLootHop;
 
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +11,7 @@ import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.iutils.InventoryUtils;
 import net.runelite.client.plugins.iutils.iUtils;
+import net.runelite.client.plugins.JakLootHop.JakLootHopConfig;
 import org.pf4j.Extension;
 
 import javax.inject.Inject;
@@ -26,9 +27,9 @@ import java.util.stream.Collectors;
 	tags = {"oli", "oiuyo", "drop", "dropper", "auto", "skilling"}
 )
 @Slf4j
-public class OliDropperPlugin extends Plugin {
+public class JakLootHopPlugin extends Plugin {
 	@Inject
-	private OliDropperConfig config;
+	private JakLootHopConfig config;
 
 	@Inject
 	private Client client;
@@ -36,16 +37,16 @@ public class OliDropperPlugin extends Plugin {
 	@Inject
 	private InventoryUtils inventory;
 
-	public List<String> itemList;
+	public List<String> targetString;
 
-	public List<Integer> itemIDList;
+	public List<Integer> targetID;
 
-	public OliDropperPlugin() {
+	public JakLootHopPlugin() {
 	}
 
 	@Provides
-	OliDropperConfig provideConfig(ConfigManager configManager) {
-		return configManager.getConfig(OliDropperConfig.class);
+	JakLootHopConfig provideConfig(ConfigManager configManager) {
+		return configManager.getConfig(JakLootHopConfig.class);
 	}
 
 	@Override
@@ -60,15 +61,15 @@ public class OliDropperPlugin extends Plugin {
 
 	@Subscribe
 	private void onGameTick(GameTick event) {
-		if (config.itemIDs() == null)
+		if (!startLootHop)
 		{
 			return;
 		}
 		else {
-			itemList = Arrays.asList(config.itemIDs().split(","));
-			itemIDList = itemList.stream().map(Integer::parseInt).collect(Collectors.toList());
+			targetString = Arrays.asList(config.targetIDs().split(","));
+			targetID = itemList.stream().map(Integer::parseInt).collect(Collectors.toList());
 		}
-		if (inventory.isFull() && inventory.containsItem(itemIDList))
+		if (config)
 		{
 			inventory.dropItems(itemIDList, true, config.sleepMin(), config.sleepMax());
 		}

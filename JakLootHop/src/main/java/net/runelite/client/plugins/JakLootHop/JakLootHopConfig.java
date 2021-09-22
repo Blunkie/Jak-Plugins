@@ -22,14 +22,62 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.olidropper;
+package net.runelite.client.plugins.JakLootHop;
 
 import net.runelite.client.config.*;
 
-@ConfigGroup("OliDropperConfig")
+@ConfigGroup("JakLootHopConfig")
 
-public interface OliDropperConfig extends Config
+public interface JakLootHopConfig extends Config
 {
+    @ConfigSection(
+            keyName = "pluginConfig",
+            name = "Plugin Settings",
+            description = "Key plugin settings",
+            position = 1,
+            closedByDefault = true
+    )
+    String pluginConfig = "pluginConfig";
+
+    @ConfigItem(
+            keyName = "enableUI",
+            name = "Enable UI",
+            description = "Enables UI.",
+            position = 2,
+            section = "pluginConfig"
+    )
+    default boolean enableUI()
+    {
+        return true;
+    }
+
+    @ConfigItem(
+            keyName = "targetType",
+            name = "Target Type",
+            description = "Type of Target, use developer tools to get item, NPC, and object IDs.",
+            position = 70,
+            title = "skillerTitle"
+    )
+    default JakLootHopType type() {
+        return JakLootHopType.ITEM  ;
+    }
+
+    @Range(
+            min = 0,
+            max = 550
+    )
+    @ConfigItem(
+            keyName = "targetIDs",
+            name = "Target IDs",
+            description = "List of item IDs. Seperated by a comma.",
+            position = 4,
+            section = "pluginConfig"
+    )
+    default String targetIDs()
+    {
+        return null;
+    }
+
     @ConfigTitle(
             keyName = "delayConfig",
             name = "Sleep Delay Configuration",
@@ -72,19 +120,4 @@ public interface OliDropperConfig extends Config
         return 350;
     }
 
-    @Range(
-            min = 0,
-            max = 550
-    )
-
-    @ConfigItem(
-            keyName = "itemIDs",
-            name = "Item IDs to drop",
-            description = "List of item IDs. Seperated by a comma.",
-            position = 4
-    )
-    default String itemIDs()
-    {
-        return null;
-    }
 }

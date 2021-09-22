@@ -25,8 +25,7 @@
 
 rootProject.name = "Jak Plugins"
 
-include(":JakLootHop")
-include("olidropper")
+include("JakSpiceCollector")
 
 for (project in rootProject.children) {
     project.apply {

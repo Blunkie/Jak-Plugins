@@ -24,7 +24,7 @@ allprojects {
     }
 }
 
-project.extra["GithubUrl"] = "https://github.com/Jakous-Jak-Plugins"
+project.extra["GithubUrl"] = "https://github.com/Jakous/Jak-Plugins"
 
 apply<BootstrapPlugin>()
 
@@ -32,7 +32,7 @@ subprojects {
     group = "com.openosrs.externals"
 
     project.extra["PluginProvider"] = "Jakus#6846"
-    project.extra["ProjectSupportUrl"] = "https://discord.gg/BTmDGMPUJd"
+    project.extra["ProjectSupportUrl"] = "https://discord.gg/ktJKEZ7CjH"
     project.extra["PluginLicense"] = "3-Clause BSD License"
 
     repositories {

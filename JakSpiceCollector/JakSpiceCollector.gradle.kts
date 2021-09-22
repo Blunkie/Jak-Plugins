@@ -27,8 +27,8 @@ import ProjectVersions.openosrsVersion
 
 version = "0.0.1"
 
-project.extra["PluginName"] = "OliDropper" // This is the name that is used in the external plugin manager panel
-project.extra["PluginDescription"] = "Automatically drops specified items when inventory is full." // This is the description that is used in the external plugin manager panel
+project.extra["PluginName"] = "Jak Spice Collector" // This is the name that is used in the external plugin manager panel
+project.extra["PluginDescription"] = "Automatically fights behemoth hell rats for spice, uses raw karambwanji for heal" // This is the description that is used in the external plugin manager panel
 
 dependencies {
     annotationProcessor(Libraries.lombok)
@@ -41,6 +41,7 @@ dependencies {
     compileOnly(Libraries.guice)
     compileOnly(Libraries.lombok)
     compileOnly(Libraries.pf4j)
+    compileOnly(Libraries.apacheCommonsText)
 }
 
 tasks {

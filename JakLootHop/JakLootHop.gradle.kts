@@ -25,10 +25,10 @@ import ProjectVersions.openosrsVersion
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "0.0.8"
+version = "0.0.1"
 
-project.extra["PluginName"] = "OliVorkath" // This is the name that is used in the external plugin manager panel
-project.extra["PluginDescription"] = "Automatically dodges fireballs and re-enables quick prayers" // This is the description that is used in the external plugin manager panel
+project.extra["PluginName"] = "Jak Loot + Hop" // This is the name that is used in the external plugin manager panel
+project.extra["PluginDescription"] = "Loots items, chests, or implings in an area before hopping worlds." // This is the description that is used in the external plugin manager panel
 
 dependencies {
     annotationProcessor(Libraries.lombok)
@@ -41,6 +41,7 @@ dependencies {
     compileOnly(Libraries.guice)
     compileOnly(Libraries.lombok)
     compileOnly(Libraries.pf4j)
+    compileOnly(Libraries.)
 }
 
 tasks {
