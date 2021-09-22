@@ -30,26 +30,6 @@ import net.runelite.client.config.*;
 
 public interface JakSpiceCollectorConfig extends Config
 {
-	@ConfigTitle(
-			keyName = "instructionsTitle",
-			name = "Instructions",
-			description = "",
-			position = 1
-	)
-	String instructionsTitle = "instructionsTitle";
-
-	@ConfigItem(
-			keyName = "instructions",
-			name = "",
-			description = "Instructions. Don't enter anything into this field",
-			position = 2,
-			title = "instructionsTitle"
-	)
-	default String instructions() {
-		return "Start in Evil Dave's basement near with raw karambwanji in inventory near the behemoth hell rat you want to fight. Does not bank, if you want banking checkout Sandy Plugins." +
-				"DO NOT USE KITTEN - I CAN NOT TAKE THE MORAL WEIGHT OF BEING RESPONSIBLE FOR ANY KITTEN DEATHS.";
-	}
-
 	@ConfigItem(
 			keyName = "enableUI",
 			name = "Enable UI",
