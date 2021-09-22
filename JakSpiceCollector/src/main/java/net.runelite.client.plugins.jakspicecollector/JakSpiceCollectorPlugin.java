@@ -79,16 +79,13 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	private JakSpiceCollectorConfig config;
 
 	@Inject
+	private JakSpiceCollectorOverlay overlay;
+
+	@Inject
 	private iUtils utils;
 
 	@Inject
-	private NPCUtils npc;
-
-	@Inject
 	private KeyboardUtils keyboard;
-
-	@Inject
-	private PlayerUtils player;
 
 	@Inject
 	protected Chatbox chatbox;
@@ -100,19 +97,10 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	private CalculationUtils calc;
 
 	@Inject
-	private MenuUtils menu;
-
-	@Inject
 	private ConfigManager configManager;
 
 	@Inject
-	private ItemManager itemManager;
-
-	@Inject
 	OverlayManager overlayManager;
-
-	@Inject
-	private JakSpiceCollectorOverlay overlay;
 
 	@Inject
 	private Notifier notifier;
@@ -194,13 +182,12 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	@Subscribe
 	private void onGameTick(GameTick event)
 	{
-		NPC behemothRat = new NPCQuery().idEquals(NpcID.HELLRAT_BEHEMOTH).result(client).nearestTo(client.getLocalPlayer());
-		NPC basementRats = new NPCQuery().idEquals(NpcID.HELLRAT).result(client).nearestTo(client.getLocalPlayer());
-		NPC cat = new NPCQuery().nameContains("cat").result(client).nearestTo(client.getLocalPlayer());
-		WallObject curtain = new WallObjectQuery().idEquals(539).result(client).nearestTo(client.getLocalPlayer());
-		Widget insertCat = client.getWidget(14352385);
-		Widget clickContinue = client.getWidget(12648449); //Widget for click here to continue to drop/insert cat
-		Widget clickContinue1 = client.getWidget(15007746); //Widget for click here to continue to start fight
+		NPC basementRats = new NPCQuery().idEquals(NpcID.HELLRAT).result(client).nearestTo(client.getLocalPlayer()); //NPC of hell rats in basement
+		NPC cat = new NPCQuery().nameContains("cat").result(client).nearestTo(client.getLocalPlayer()); //NPC of closest cat (ours)
+		WallObject curtain = new WallObjectQuery().idEquals(539).result(client).nearestTo(client.getLocalPlayer()); //Wallobject for curtain
+		Widget insertCat = client.getWidget(14352385); //Chatbox widget for inserting cat
+		Widget clickContinue = client.getWidget(12648449); //Chatbox widget for click here to continue to drop/insert cat
+		Widget clickContinue1 = client.getWidget(15007746); //Chatbox widget for click here to continue to start fight
 
 		if (!startSpice) {
 			return;
@@ -217,7 +204,6 @@ public class JakSpiceCollectorPlugin extends Plugin {
 				//shutdown plugin and picks up cat when only 1 open inventory spot left.
 				if (inventory.getEmptySlots() == 1) {
 					if (cat != null) {
-						utils.sendGameMessage("CAT2");
 						retrieveCat();
 						timeout = 2 + tickDelay();
 					}
@@ -236,14 +222,13 @@ public class JakSpiceCollectorPlugin extends Plugin {
 					utils.doInvokeMsTime(enterCurtain, sleepLength);
 				}
 				if (clickContinue != null) {
-					keyboard.pressKey(VK_SPACE); //uses spacebar to continue dialogue
+					keyboard.pressKey(VK_SPACE); //uses space to continue dialogue
 					timeout = tickDelay();
 				}
 				if (insertCat != null) {
 					log.info("Cat");
 					MenuEntry insert = new MenuEntry("Continue", "", 0, MenuAction.WIDGET_TYPE_6.getId(), 1, 14352385, false);
 					utils.doInvokeMsTime(insert, sleepLength);
-					timeout = 2 + tickDelay();
 				}
 			}
 
@@ -254,18 +239,16 @@ public class JakSpiceCollectorPlugin extends Plugin {
 					useKaramOnCurtain();
 					getNextHealHP();
 					timeout = 2 + tickDelay();
-					return;
 				} else
 				if (clickContinue1 != null) {
 					updateStatus("In Combat");
 					getNextHealHP();
-					keyboard.pressKey(VK_SPACE); //uses spacebar to continue dialogue
+					keyboard.pressKey(VK_SPACE); //uses space to continue dialogue
 					timeout = 1 + tickDelay();
 				}
 			}
 		}
 	}
-
 
 	private boolean inBasement()
 	{
