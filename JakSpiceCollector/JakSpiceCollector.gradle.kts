@@ -25,7 +25,7 @@ import ProjectVersions.openosrsVersion
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "0.0.3"
+version = "0.0.4"
 
 project.extra["PluginName"] = "Jak Spice Collector" // This is the name that is used in the external plugin manager panel
 project.extra["PluginDescription"] = "Automatically fights behemoth hell rats for spice, uses raw karambwanji for heal" // This is the description that is used in the external plugin manager panel
