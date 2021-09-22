@@ -236,7 +236,7 @@ public class JakSpiceCollectorPlugin extends Plugin {
 				updateStatus("In Combat");
 				if (cat.getHealthRatio() != -1 && calculateHealth(cat) <= nextHealHp && timeout == 0) {
 					updateStatus("Healing Cat");
-					useKaramOnCurtain();
+					useKaramOnCurtain(); //uses karambwanji on curtain to heal cat.
 					getNextHealHP();
 					timeout = 2 + tickDelay();
 				} else
@@ -306,7 +306,7 @@ public class JakSpiceCollectorPlugin extends Plugin {
 		nextHealHp = calc.getRandomIntBetweenRange(3, 5);
 	}
 
-	public void updateStatus(String newStatus){
+	public void updateStatus(String newStatus){ //Updates status String
 		int statusTotalCharCount = status.length();
 		status.replace(0, statusTotalCharCount, newStatus);
 	}
