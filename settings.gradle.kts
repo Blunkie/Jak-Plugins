@@ -26,6 +26,7 @@
 rootProject.name = "Jak Plugins"
 
 include("JakSpiceCollector")
+include("JakClickToFlick")
 
 for (project in rootProject.children) {
     project.apply {
