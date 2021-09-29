@@ -133,10 +133,6 @@ public class JakClickToFlickPlugin extends Plugin {
                 botTimer = Instant.now();
                 overlayManager.add(overlay);
             } else {
-                if (client.getVar(Varbits.QUICK_PRAYER) == 1) {
-                    entry = new MenuEntry("prayer toggle", "Quick-prayers", 1, MenuAction.CC_OP.getId(), -1, 10485775, false);
-                    click();
-                }
                 resetVals();
             }
         }
