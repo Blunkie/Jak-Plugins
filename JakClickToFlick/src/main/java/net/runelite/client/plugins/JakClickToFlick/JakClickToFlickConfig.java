@@ -51,8 +51,8 @@ public interface JakClickToFlickConfig extends Config {
     String delayConfig = "delayConfig";
 
     @Range(
-            min = 75,
-            max = 200
+            min = 45,
+            max = 150
     )
     @ConfigItem(
             keyName = "sleepMin",
@@ -62,12 +62,12 @@ public interface JakClickToFlickConfig extends Config {
             section = "delayConfig"
     )
     default int sleepMin() {
-        return 0;
+        return 45;
     }
 
     @Range(
-            min = 75,
-            max = 200
+            min = 250,
+            max = 350
     )
     @ConfigItem(
             keyName = "sleepMax",
@@ -76,13 +76,11 @@ public interface JakClickToFlickConfig extends Config {
             position = 12,
             section = "delayConfig"
     )
-    default int sleepMax() {
-        return 0;
-    }
+    default int sleepMax() { return 300; }
 
     @Range(
-            min = 75,
-            max = 200
+            min = 150,
+            max = 230
     )
     @ConfigItem(
             keyName = "sleepTarget",
@@ -92,12 +90,12 @@ public interface JakClickToFlickConfig extends Config {
             section = "delayConfig"
     )
     default int sleepTarget() {
-        return 0;
+        return 170;
     }
 
     @Range(
-            min = 75,
-            max = 200
+            min = 20,
+            max = 100
     )
     @ConfigItem(
             keyName = "sleepDeviation",
@@ -107,7 +105,7 @@ public interface JakClickToFlickConfig extends Config {
             section = "delayConfig"
     )
     default int sleepDeviation() {
-        return 10;
+        return 35;
     }
 }
 

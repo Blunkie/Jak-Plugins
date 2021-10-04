@@ -152,7 +152,6 @@ public class JakClickToFlickPlugin extends Plugin {
         if (!startFlick) {
             return;
         }
-        delayTime();
         boolean quickPrayer = client.getVar(Varbits.QUICK_PRAYER) == 1;
         executor.submit(() -> {
             if (quickPrayer) {
