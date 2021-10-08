@@ -60,7 +60,7 @@ class JakTeleAlchOverlay extends OverlayPanel {
             panelComponent.setPreferredSize(new Dimension(160, 140));
             panelComponent.setBorder(new Rectangle(5, 5, 5, 5));
             panelComponent.getChildren().add(TitleComponent.builder()
-                    .text("Jak Spice Collector")
+                    .text("Jak Tele Alch")
                     .color(ColorUtil.fromHex("#53d4d4"))
                     .build());
             panelComponent.getChildren().add(tableComponent);
