@@ -23,7 +23,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package net.runelite.client.plugins.JakClickToFlick;
+package net.runelite.client.plugins.JakEssenceMiner;
 
 import com.google.inject.Provides;
 import lombok.extern.slf4j.Slf4j;
@@ -41,7 +41,6 @@ import org.pf4j.Extension;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.time.Instant;
 import java.util.Random;

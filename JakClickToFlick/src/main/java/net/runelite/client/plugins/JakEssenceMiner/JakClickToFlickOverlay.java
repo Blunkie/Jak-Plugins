@@ -1,4 +1,4 @@
-package net.runelite.client.plugins.JakClickToFlick;
+package net.runelite.client.plugins.JakEssenceMiner;
 
 import com.openosrs.client.ui.overlay.components.table.TableAlignment;
 import com.openosrs.client.ui.overlay.components.table.TableComponent;
@@ -13,8 +13,6 @@ import net.runelite.client.util.ColorUtil;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.awt.*;
-import java.time.Duration;
-import java.time.Instant;
 
 import static net.runelite.api.MenuAction.RUNELITE_OVERLAY_CONFIG;
 import static net.runelite.client.ui.overlay.OverlayManager.OPTION_CONFIGURE;
