@@ -54,6 +54,17 @@ subprojects {
 
     apply<JavaPlugin>()
 
+    dependencies {
+        annotationProcessor(Libraries.lombok)
+        annotationProcessor(Libraries.pf4j)
+
+        compileOnly(Libraries.apacheCommonsText)
+        compileOnly(Libraries.guice)
+        compileOnly(Libraries.lombok)
+        compileOnly(Libraries.pf4j)
+    }
+
+
     configure<JavaPluginConvention> {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11

@@ -28,6 +28,7 @@ rootProject.name = "Jak Plugins"
 include("JakSpiceCollector")
 include("JakClickToFlick")
 include("JakTeleAlch")
+include("JakEssenceMiner")
 
 for (project in rootProject.children) {
     project.apply {
