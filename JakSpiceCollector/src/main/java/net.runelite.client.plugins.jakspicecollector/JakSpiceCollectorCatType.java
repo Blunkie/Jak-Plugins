@@ -4,8 +4,7 @@ import javax.annotation.Nullable;
 
 public enum JakSpiceCollectorCatType {
 	WILY("Wily cat"),
-	NORMAL("Cat"),
-	KITTEN("Kitten");
+	NORMAL("Cat");
 
 
 	private final String name;

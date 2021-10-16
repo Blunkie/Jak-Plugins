@@ -30,6 +30,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.queries.GameObjectQuery;
@@ -58,6 +59,7 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static java.awt.event.KeyEvent.*;
 
@@ -95,6 +97,9 @@ public class JakSpiceCollectorPlugin extends Plugin {
 
 	@Inject
 	private CalculationUtils calc;
+
+	@Inject
+	private WalkUtils walk;
 
 	@Inject
 	OverlayManager overlayManager;
@@ -142,13 +147,14 @@ public class JakSpiceCollectorPlugin extends Plugin {
 			return;
 		}
 		log.info("button {} pressed!", configButtonClicked.getKey());
-		if (configButtonClicked.getKey().equals("startSpice")) {
+		if (configButtonClicked.getKey().equals("startSpice") && inventory.containsItem(3150)) {
 			if (!startSpice && inBasement()) {
 				startSpice = true;
 				targetMenu = null;
 				botTimer = Instant.now();
 				overlayManager.add(overlay);
 				getCatHP();
+				getNextHealHP();
 				timeout = 0;
 			} else {
 				resetVals();
@@ -170,9 +176,10 @@ public class JakSpiceCollectorPlugin extends Plugin {
 	@Subscribe
 	private void onGameTick(GameTick event) {
 		NPC basementRats = new NPCQuery().idEquals(NpcID.HELLRAT).result(client).nearestTo(client.getLocalPlayer()); //NPC of hell rats in basement
-		NPC cat = new NPCQuery().nameContains("cat").result(client).nearestTo(client.getLocalPlayer()); //NPC of closest cat (ours)
+		NPC normalCat = new NPCQuery().nameContains("Cat").result(client).nearestTo(client.getLocalPlayer()); //NPC of closest cat (ours) - Normal cats have uppercase C
+		NPC hellCat = new NPCQuery().nameContains("cat").result(client).nearestTo(client.getLocalPlayer()); //NPC of closest cat (ours) - Hellcats have lowercase c
 		WallObject curtain = new WallObjectQuery().idEquals(539).result(client).nearestTo(client.getLocalPlayer()); //Wallobject for curtain
-		Object stairs = new GameObjectQuery().idEquals(12265).result(client).nearestTo(client.getLocalPlayer());
+		LocalPoint runAway = new LocalPoint(6848, 5824); //LocalPoint south of stairs, used to run away if out of food during fight.
 		Widget insertCat = client.getWidget(14352385); //Chatbox widget for inserting cat
 		Widget clickContinue = client.getWidget(12648449); //Chatbox widget for click here to continue to drop/insert cat
 		Widget clickContinue1 = client.getWidget(15007746); //Chatbox widget for click here to continue to start fight
@@ -189,9 +196,12 @@ public class JakSpiceCollectorPlugin extends Plugin {
 			if (basementRats != null) { //hell rats in basement are not present in combat instance
 
 				//shutdown plugin and picks up cat when only 1 open inventory spot left.
-				if (inventory.getEmptySlots() == 1) {
-					if (cat != null) {
-						retrieveCat();
+				if (inventory.getEmptySlots() == 1 || !inventory.containsItem(3150)) {
+					if (hellCat != null) {
+						retrieveHellCat();
+						timeout = 2 + tickDelay();
+					} else if (normalCat != null) {
+						retrieveNormalCat();
 						timeout = 2 + tickDelay();
 					}
 					notifyShutdown();
@@ -205,13 +215,18 @@ public class JakSpiceCollectorPlugin extends Plugin {
 					MenuEntry enterCurtain = new MenuEntry("Enter", "", //Target option and Target value
 							curtain.getId(), //Target ID
 							MenuAction.GAME_OBJECT_FIRST_OPTION.getId(), //opcode for interaction
-							curtain.getLocalLocation().getSceneX(), curtain.getLocalLocation().getSceneY(), false); //location
-					utils.doInvokeMsTime(enterCurtain, sleepLength);
+							curtain.getLocalLocation().getSceneX(), curtain.getLocalLocation().getSceneY(), false);
+					utils.doInvokeMsTime(enterCurtain, sleepLength); //Interacts with the closest curtain to begin fight.
+					timeout = 2;
 				}
+
+				//Interacts with the click here to continue widget
 				if (clickContinue != null) {
-					keyboard.pressKey(VK_SPACE); //uses space to continue dialogue
+					chatbox.continueChat();
 					timeout = tickDelay();
 				}
+
+				//Interacts with the continue widget to insert cat
 				if (insertCat != null) {
 					log.info("Cat");
 					MenuEntry insert = new MenuEntry("Continue", "", 0, MenuAction.WIDGET_TYPE_6.getId(), 1, 14352385, false);
@@ -221,16 +236,34 @@ public class JakSpiceCollectorPlugin extends Plugin {
 			}
 
 			if (basementRats == null) {
+				//Runs away from fight when out of karambwanji
+				if (!inventory.containsItem(3150)) {
+					walk.sceneWalk(runAway, 0, sleepLength);
+					timeout = 5 + tickDelay();
+				}
 				updateStatus("In Combat");
-				if (cat.getHealthRatio() != -1 && calculateHealth(cat) <= getNextHealHP() && timeout == 0) {
+
+				//uses karambwanji on curtain to heal hellcat.
+				if (hellCat != null && hellCat.getHealthRatio() != -1 && calculateHealth(hellCat) <= getNextHealHP() && timeout == 0) {
 					updateStatus("Healing Cat");
-					useKaramOnCurtain(); //uses karambwanji on curtain to heal cat.
+					useKaramOnCurtain();
 					getNextHealHP();
-					timeout = 2 + tickDelay();
-				} else if (clickContinue1 != null) {
+					timeout = 2;
+				}
+
+				//uses karambwanji on curtain to heal normal cat.
+				if (normalCat != null && normalCat.getHealthRatio() != -1 && calculateHealth(normalCat) <= getNextHealHP() && timeout == 0) {
+					updateStatus("Healing Cat");
+					useKaramOnCurtain();
+					getNextHealHP();
+					timeout = 2;
+				}
+
+				//Interacts with the click here to continue widget
+				if (clickContinue1 != null) {
 					updateStatus("In Combat");
 					getNextHealHP();
-					keyboard.pressKey(VK_SPACE); //uses space to continue dialogue
+					chatbox.continueChat();
 					timeout = 1 + tickDelay();
 				}
 			}
@@ -256,7 +289,7 @@ public class JakSpiceCollectorPlugin extends Plugin {
 		final int healthRatio = target.getHealthRatio();
 		final Integer maxHealth = getCatHP();
 
-		if (healthRatio < 0 || healthScale <= 0 || maxHealth == null) {
+		if (healthRatio < 0 || healthScale <= 0) {
 			return -1;
 		}
 
@@ -270,34 +303,38 @@ public class JakSpiceCollectorPlugin extends Plugin {
 				break;
 			case NORMAL: totalHP = 6;
 				break;
-			case KITTEN: totalHP = 4;
-				break;
 		}
 		return totalHP;
 	}
 
-	private int getNextHealHP() {
-		int healCatAt = 3;
+	private long getNextHealHP() {
+		long healCatAt = 3;
 		switch (config.type()) {
-			case WILY: healCatAt = calc.getRandomIntBetweenRange(3, 9);
+			case WILY: healCatAt = getRandomIntBetweenTrueRange(3, 9);
 				break;
-			case NORMAL: healCatAt = calc.getRandomIntBetweenRange(2, 5);
-				break;
-			case KITTEN: healCatAt = calc.getRandomIntBetweenRange(2, 3);
+			case NORMAL: healCatAt = getRandomIntBetweenTrueRange(2, 5);
 				break;
 		}
 		return healCatAt;
 	}
 
-	private void retrieveCat() {
+	private void retrieveNormalCat() {
+		NPC cat = new NPCQuery().nameContains("Cat").result(client).nearestTo(client.getLocalPlayer());
+		MenuEntry entry = new MenuEntry("Pick-up", "", //Target option and Target value
+				cat.getIndex(), //Target Index
+				MenuAction.NPC_FIRST_OPTION.getId(), //opcode for interaction
+				0, 0, false); //location
+		utils.doInvokeMsTime(entry, sleepDelay());
+	}
+	private void retrieveHellCat() {
 		NPC cat = new NPCQuery().nameContains("cat").result(client).nearestTo(client.getLocalPlayer());
 		MenuEntry entry = new MenuEntry("Pick-up", "", //Target option and Target value
 				cat.getIndex(), //Target Index
 				MenuAction.NPC_FIRST_OPTION.getId(), //opcode for interaction
 				0, 0, false); //location
 		utils.doInvokeMsTime(entry, sleepDelay());
-		//  utils.doModifiedInvokeMsTime(entry, cat.getId(), cat.getIndex(), MenuAction.NPC_FIRST_OPTION.getId(), sleepLength);
 	}
+
 
 	private void useKaramOnCurtain() {
 		WallObject curtain = new WallObjectQuery().idEquals(539).result(client).nearestTo(client.getLocalPlayer());
@@ -309,6 +346,11 @@ public class JakSpiceCollectorPlugin extends Plugin {
 
 		utils.doModifiedInvokeMsTime(entry, karambwjani.getId(), karambwjani.getIndex(),
 				MenuAction.ITEM_USE_ON_GAME_OBJECT.getId(), sleepDelay());
+	}
+
+	//Modified Illumines getRandomInt to remove +1 from max.
+	public int getRandomIntBetweenTrueRange(int min, int max) {
+		return ThreadLocalRandom.current().nextInt(min, max);
 	}
 
 	public void updateStatus(String newStatus) { //Updates status String

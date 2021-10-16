@@ -50,13 +50,11 @@ class JakTeleAlchOverlay extends OverlayPanel {
         timeFormat = (duration.toHours() < 1) ? "mm:ss" : "HH:mm:ss";
         tableComponent.addRow("Time running:", formatDuration(duration.toMillis(), timeFormat));
 
-        tableComponent.addRow("", "");
-
         TableComponent tableStatsComponent = new TableComponent();
         tableStatsComponent.setColumnAlignments(TableAlignment.LEFT, TableAlignment.RIGHT);
 
         if (!tableComponent.isEmpty()) {
-        //    panelComponent.setBackgroundColor(ColorUtil.fromHex("#121212")); //Material Dark default
+            //    panelComponent.setBackgroundColor(ColorUtil.fromHex("#121212")); //Material Dark default
             panelComponent.setPreferredSize(new Dimension(160, 140));
             panelComponent.setBorder(new Rectangle(5, 5, 5, 5));
             panelComponent.getChildren().add(TitleComponent.builder()

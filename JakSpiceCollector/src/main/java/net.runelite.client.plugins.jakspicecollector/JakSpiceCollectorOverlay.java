@@ -35,7 +35,6 @@ class JakSpiceCollectorOverlay extends OverlayPanel {
         setPosition(OverlayPosition.BOTTOM_LEFT);
         this.plugin = plugin;
         this.config = config;
-        getMenuEntries().add(new OverlayMenuEntry(RUNELITE_OVERLAY_CONFIG, OPTION_CONFIGURE, "Template overlay"));
     }
 
     @Override
@@ -50,13 +49,10 @@ class JakSpiceCollectorOverlay extends OverlayPanel {
         timeFormat = (duration.toHours() < 1) ? "mm:ss" : "HH:mm:ss";
         tableComponent.addRow("Time running:", formatDuration(duration.toMillis(), timeFormat));
 
-        tableComponent.addRow("", "");
-
         TableComponent tableStatsComponent = new TableComponent();
         tableStatsComponent.setColumnAlignments(TableAlignment.LEFT, TableAlignment.RIGHT);
 
         if (!tableComponent.isEmpty()) {
-        //    panelComponent.setBackgroundColor(ColorUtil.fromHex("#121212")); //Material Dark default
             panelComponent.setPreferredSize(new Dimension(160, 140));
             panelComponent.setBorder(new Rectangle(5, 5, 5, 5));
             panelComponent.getChildren().add(TitleComponent.builder()

@@ -76,9 +76,6 @@ public class JakTeleAlchPlugin extends Plugin {
 	private Client client;
 
 	@Inject
-	protected Chatbox chatbox;
-
-	@Inject
 	private JakTeleAlchConfig config;
 
 	@Inject
@@ -88,7 +85,7 @@ public class JakTeleAlchPlugin extends Plugin {
 	private iUtils utils;
 
 	@Inject
-	private KeyboardUtils keyboard;
+	private PlayerUtils player;
 
 	@Inject
 	private InventoryUtils inventory;
@@ -109,6 +106,7 @@ public class JakTeleAlchPlugin extends Plugin {
 	int tickLength;
 	long sleepLength;
 	boolean startTeleAlch;
+	private final Set<Integer> FIRE_RUNE_ITEMS = Set.of(ItemID.FIRE_BATTLESTAFF, ItemID.STAFF_OF_FIRE, ItemID.MYSTIC_FIRE_STAFF, ItemID.TOME_OF_FIRE);
 
 	Instant botTimer;
 	MenuEntry teleport;
@@ -162,21 +160,6 @@ public class JakTeleAlchPlugin extends Plugin {
 		return calc.randomDelay(config.sleepWeightedDistribution(), config.sleepMin(), config.sleepMax(), config.sleepDeviation(), config.sleepTarget());
 	}
 
-
-/*	@Subscribe
-	private void onAnimationChanged(AnimationChanged event) {
-		if(!startTeleAlch) {
-			return;
-		}
-		if (event.getActor() != client.getLocalPlayer()) {
-			return;
-		}
-		if (event.getActor().getGraphic() == 713) { //Checks for alch animation before teleporting
-			utils.oneClickCastSpell(spellInfo, teleport, teleSleepDelay());
-
-		}
-	}*/
-
 	@Subscribe
 	private void onGraphicChanged(GraphicChanged event) {
 		if(!startTeleAlch) {
@@ -197,7 +180,8 @@ public class JakTeleAlchPlugin extends Plugin {
 			return;
 		}
 
-		if (!inventory.containsItem(ItemID.FIRE_RUNE) || !inventory.containsItem(ItemID.NATURE_RUNE) || !inventory.containsItem(config.alchItemID())) {
+		if (((!inventory.containsItem(ItemID.FIRE_RUNE) || !inventory.containsItem(ItemID.LAVA_RUNE)) && !player.isItemEquipped(FIRE_RUNE_ITEMS))
+				|| !inventory.containsItem(ItemID.NATURE_RUNE) || !inventory.containsItem(config.alchItemID()) || !inventory.containsItem(ItemID.LAW_RUNE)) {
 			notifyShutdown();
 		}
 
@@ -215,7 +199,7 @@ public class JakTeleAlchPlugin extends Plugin {
 		WidgetItem alchable = inventory.getWidgetItem(config.alchItemID());
 		alch = new MenuEntry("Cast", "", alchable.getId(), MenuAction.ITEM_USE_ON_WIDGET.getId(), alchable.getIndex(), 9764864, true);
 		utils.oneClickCastSpell(WidgetInfo.SPELL_HIGH_LEVEL_ALCHEMY, alch, alchable.getCanvasBounds().getBounds(), sleepDelay());
-	 }
+	}
 
 	private void getCorrectTeleport() {
 		switch (config.type()) {
@@ -228,7 +212,7 @@ public class JakTeleAlchPlugin extends Plugin {
 			case FALADOR: teleport = new MenuEntry("Cast", "<col=00ff00>Falador Teleport</col>", 1, MenuAction.CC_OP.getId(), -1, 14286874, false);
 				spellInfo = WidgetInfo.SPELL_FALADOR_TELEPORT;
 				break;
-			case CAMELOT: teleport = new MenuEntry("Seers'", "<col=00ff00>Camelot Teleport</col>", 2, MenuAction.CC_OP.getId(), -1, 14286879, false);
+			case CAMELOT: teleport = new MenuEntry("", "<col=00ff00>Camelot Teleport</col>", 2, MenuAction.CC_OP.getId(), -1, 14286879, false);
 				spellInfo = WidgetInfo.SPELL_CAMELOT_TELEPORT;
 				break;
 			case ARDOUGNE: teleport = new MenuEntry("Cast", "<col=00ff00>Ardougne Teleport</col>", 1, MenuAction.CC_OP.getId(), -1, 14286885, false);
@@ -250,5 +234,4 @@ public class JakTeleAlchPlugin extends Plugin {
 		notifier.notify("Out of Runes or Alchables");
 		this.shutDown();
 	}
-
 }
