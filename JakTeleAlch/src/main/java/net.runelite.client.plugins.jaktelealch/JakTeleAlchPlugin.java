@@ -212,7 +212,7 @@ public class JakTeleAlchPlugin extends Plugin {
 			case FALADOR: teleport = new MenuEntry("Cast", "<col=00ff00>Falador Teleport</col>", 1, MenuAction.CC_OP.getId(), -1, 14286874, false);
 				spellInfo = WidgetInfo.SPELL_FALADOR_TELEPORT;
 				break;
-			case CAMELOT: teleport = new MenuEntry("", "<col=00ff00>Camelot Teleport</col>", 2, MenuAction.CC_OP.getId(), -1, 14286879, false);
+			case CAMELOT: teleport = new MenuEntry("Cast", "<col=00ff00>Camelot Teleport</col>", 1, MenuAction.CC_OP.getId(), -1, 14286879, false);
 				spellInfo = WidgetInfo.SPELL_CAMELOT_TELEPORT;
 				break;
 			case ARDOUGNE: teleport = new MenuEntry("Cast", "<col=00ff00>Ardougne Teleport</col>", 1, MenuAction.CC_OP.getId(), -1, 14286885, false);
