@@ -31,28 +31,10 @@ import net.runelite.client.config.*;
 public interface JakTeleAlchConfig extends Config
 {
 	@ConfigItem(
-			keyName = "type",
-			name = "Teleport Spell",
-			description = "Type of teleport being used",
-			position = 1
-	)
-	default JakTeleAlchLoc type() {
-		return JakTeleAlchLoc.LUMBRIDGE;
-	}
-
-	@ConfigItem(
-			keyName = "alchItemID",
-			name = "Alch Item ID",
-			description = "ID of item to be alched",
-			position = 4
-	)
-	default int alchItemID() { return 420; }
-
-	@ConfigItem(
 			keyName = "enableUI",
 			name = "Enable UI",
-			description = "Enable if using karambwanji as food for cat during fight.",
-			position = 4
+			description = "Enables UI showing runtime + exp gained.",
+			position = 90
 	)
 	default boolean enableUI()
 	{
@@ -60,10 +42,56 @@ public interface JakTeleAlchConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "mode",
+			name = "Plugin Mode",
+			description = "Select the plugin mode",
+			position = 91
+	)
+	default JakTeleAlchMode mode() {
+		return JakTeleAlchMode.TELEPORT_ALCH;
+	}
+
+	@ConfigItem(
+			keyName = "teleport",
+			name = "Teleport Spell",
+			description = "Type of teleport being used",
+			position = 92
+	)
+	default JakTeleAlchLoc teleport() {
+		return JakTeleAlchLoc.LUMBRIDGE;
+	}
+
+	@ConfigItem(
+			keyName = "stun",
+			name = "Debuff Spell",
+			description = "Type of debuff spell being used",
+			position = 93
+	)
+	default JakTeleAlchStunSpell stun() {
+		return JakTeleAlchStunSpell.STUN;
+	}
+
+	@ConfigItem(
+			keyName = "NpcID",
+			name = "NPC ID",
+			description = "ID of NPC to be splash/stunned",
+			position = 94
+	)
+	default int NpcID() { return 420; }
+
+	@ConfigItem(
+			keyName = "alchItemID",
+			name = "Alch Item ID",
+			description = "ID of item to be alched",
+			position = 95
+	)
+	default int alchItemID() { return 420; }
+
+	@ConfigItem(
 			keyName = "startTeleAlch",
 			name = "Start/Stop",
 			description = "Start/stop button",
-			position = 5
+			position = 96
 	)
 	default Button startTeleAlch() {
 		return new Button();
@@ -71,81 +99,154 @@ public interface JakTeleAlchConfig extends Config
 
 	@ConfigSection(
 			keyName = "delayConfig",
-			name = "Sleep Delay Configuration",
+			name = "Delay Configuration",
 			description = "Configure how the bot handles sleep delays",
 			closedByDefault = true,
-			position = 11
+			position = 5
 	)
-	String alchDelayConfig = "alchDelayConfig";
+	String delayConfig = "delayConfig";
+
 
 	@Range(
 			min = 0,
-			max = 550
+			max = 500
 	)
 	@ConfigItem(
 			keyName = "sleepMin",
 			name = "Sleep Min",
 			description = "",
-			position = 12,
-			section = "alchDelayConfig"
+			position = 6,
+			section = "delayConfig"
 	)
 	default int sleepMin() {
-		return 50;
+		return 100;
 	}
 
 	@Range(
 			min = 0,
-			max = 550
+			max = 500
 	)
 	@ConfigItem(
 			keyName = "sleepMax",
 			name = "Sleep Max",
 			description = "",
-			position = 13,
-			section = "alchDelayConfig"
+			position = 7,
+			section = "delayConfig"
 	)
 	default int sleepMax() {
-		return 250;
+		return 300;
 	}
 
 	@Range(
 			min = 0,
-			max = 550
+			max = 500
 	)
 	@ConfigItem(
 			keyName = "sleepTarget",
 			name = "Sleep Target",
 			description = "",
-			position = 14,
-			section = "alchDelayConfig"
+			position = 8,
+			section = "delayConfig"
 	)
 	default int sleepTarget() {
-		return 175;
+		return 200;
 	}
 
 	@Range(
 			min = 0,
-			max = 225
+			max = 200
 	)
 	@ConfigItem(
 			keyName = "sleepDeviation",
 			name = "Sleep Deviation",
 			description = "",
-			position = 15,
-			section = "alchDelayConfig"
+			position = 9,
+			section = "delayConfig"
 	)
 	default int sleepDeviation() {
-		return 45;
+		return 50;
 	}
 
 	@ConfigItem(
 			keyName = "sleepWeightedDistribution",
 			name = "Sleep Weighted Distribution",
 			description = "Shifts the random distribution towards the lower end at the target, otherwise it will be an even distribution",
-			position = 16,
-			section = "alchDelayConfig"
+			position = 10,
+			section = "delayConfig"
 	)
 	default boolean sleepWeightedDistribution() {
+		return false;
+	}
+
+	@Range(
+			min = 0,
+			max = 5
+	)
+	@ConfigItem(
+			keyName = "tickDelayMin",
+			name = "Game Tick Min",
+			description = "",
+			position = 12,
+			section = "delayConfig"
+	)
+	default int tickDelayMin() {
+		return 1;
+	}
+
+	@Range(
+			min = 0,
+			max = 5
+	)
+	@ConfigItem(
+			keyName = "tickDelayMax",
+			name = "Game Tick Max",
+			description = "",
+			position = 13,
+			section = "delayConfig"
+
+	)
+	default int tickDelayMax() {
+		return 3;
+	}
+
+	@Range(
+			min = 0,
+			max = 5
+	)
+	@ConfigItem(
+			keyName = "tickDelayTarget",
+			name = "Game Tick Target",
+			description = "",
+			position = 14,
+			section = "delayConfig"
+	)
+	default int tickDelayTarget() {
+		return 2;
+	}
+
+	@Range(
+			min = 0,
+			max = 5
+	)
+	@ConfigItem(
+			keyName = "tickDelayDeviation",
+			name = "Game Tick Deviation",
+			description = "",
+			position = 15,
+			section = "delayConfig"
+	)
+	default int tickDelayDeviation() {
+		return 1;
+	}
+
+	@ConfigItem(
+			keyName = "tickDelayWeightedDistribution",
+			name = "Game Tick Weighted Distribution",
+			description = "Shifts the random distribution towards the lower end at the target, otherwise it will be an even distribution",
+			position = 16,
+			section = "delayConfig"
+	)
+	default boolean tickDelayWeightedDistribution() {
 		return false;
 	}
 }

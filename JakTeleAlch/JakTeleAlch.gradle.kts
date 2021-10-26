@@ -25,10 +25,10 @@ import ProjectVersions.openosrsVersion
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-version = "0.0.2"
+version = "1.0.0"
 
-project.extra["PluginName"] = "Jak Tele Alch" // This is the name that is used in the external plugin manager panel
-project.extra["PluginDescription"] = "Automatically tele alchs" // This is the description that is used in the external plugin manager panel
+project.extra["PluginName"] = "Jak Magic Trainer" // This is the name that is used in the external plugin manager panel
+project.extra["PluginDescription"] = "Automatically trains magic using popular methods" // This is the description that is used in the external plugin manager panel
 
 dependencies {
     annotationProcessor(Libraries.lombok)
